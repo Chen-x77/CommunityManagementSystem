@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.applycommMapper">
+
+    <insert id="addApplycomm" parameterType="com.chen.entity.applycomm">
+        insert into applycomm(introduce,state,peo_id,com_id)
+        values (#{introduce} ,#{state},#{peo_id},#{com_id})
+    </insert>
+
+    <select id="getApplycommByPeoid" resultType="com.chen.entity.applycomm" parameterType="Integer">
+        select * from  applycomm where peo_id=#{peo_id}
+    </select>
+
+
+    <select id="finApplycommList" resultType="com.chen.entity.applycomm" parameterType="Integer">
+        select a.*,c.name as comName , p.name as peoName ,p.userName as peoUserName ,p.phone as  peoPhone
+        from applycomm a,comm c ,people p
+        where p.id=a.peo_id and c.id=a.com_id and a.com_id=#{com_id}
+    </select>
+
+    <delete id="delApplycomm" parameterType="Integer">
+        delete from applycomm where id=#{id}
+    </delete>
+
+</mapper>

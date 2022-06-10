@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.files.filesMapper">
+    <!-- //上传文件-->
+    <insert id="addCommFiles" parameterType="com.chen.entity.files">
+        insert into files(path,date,name,peo_id,com_id)
+        values(#{path},#{date},#{name},#{peo_id},#{com_id})
+    </insert>
+
+    <!--//找到文件-->
+    <select id="getFilebyId" resultType="com.chen.entity.files" parameterType="Integer">
+        select A.*, B.name as peoName
+        from (select A.*, B.name as comName
+              from (select *from files where id = #{id}) A
+                       left outer join comm B on A.com_id = B.id) A
+                 left outer join people B on A.peo_id = B.id
+    </select>
+    <!--//找到文件-->
+    <select id="findCommFileslist" resultType="com.chen.entity.files" parameterType="Integer">
+        select A.*, B.name as peoName, @i:=@i+1 as count
+        from
+            ( (select A.*, B.name as comName
+            from (select * from files where com_id =#{com_id}) A
+            left outer join comm B on A.com_id=B.id) A left outer join people B on A.peo_id=B.id )
+                , (SELECT @i := 0) AS itable
+        ORDER BY A.date DESC
+    </select>
+    <select id="queryCommFileslistByName" resultType="com.chen.entity.files" parameterType="map">
+        select A.*, B.name as peoName, @i:=@i+1 as count
+        from
+            ( (select A.*, B.name as comName
+            from (select * from files where com_id =#{com_id} and name like "%"#{name}"%") A
+            left outer join comm B on A.com_id=B.id) A left outer join people B on A.peo_id=B.id )
+                , (SELECT @i := 0) AS itable
+        ORDER BY A.date DESC
+    </select>
+    <!--//删除文件-->
+    <delete id="delfile" parameterType="Integer">
+        delete
+        from files
+        where id = #{id}
+    </delete>
+
+</mapper>

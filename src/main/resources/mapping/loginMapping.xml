@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.loginMapper">
+
+    <!--获取学院列表-->
+    <select id="finCollegesList" resultType="com.chen.entity.college">
+        select *
+        from college;
+    </select>
+    <select id="adminLogin" resultType="com.chen.entity.admin">
+        select *
+        from admin
+        where userName = #{userName}
+          and passWord = #{passWord}
+    </select>
+
+    <select id="peoLogin" resultType="com.chen.entity.people">
+        select *
+        from people
+        where userName = #{userName};
+    </select>
+    <!--注册-->
+    <insert id="register" parameterType="com.chen.entity.people">
+        insert into people(userName, passWord, name, college, phone, date, flag, name_class, wx)
+        values (#{userName}, #{passWord}, #{name}, #{college}, #{phone},
+                #{date}, #{flag}, #{name_class}, #{wx})
+    </insert>
+
+    <update id="adminUpdatePwd" parameterType="map">
+        update comm_admin.admin set passWord=#{newpassword}
+        where id=#{id}
+    </update>
+</mapper>

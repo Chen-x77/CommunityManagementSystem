@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.people.peopleMapper">
+
+
+    <!--获取某社团成员列表  包含学院名（必有）、社团名（必有） 和 部门名and职位名（可能为null）-->
+    <select id="queryPeopleList" resultType="com.chen.entity.people" parameterType="map">
+        select  A.* , B.name as officeName , B.position as officePosition
+        from (select  p.* , c.name as comName , col.name as collegeName
+              from comm_admin.college col , comm_admin.people p , comm_admin.comm c
+              where p.com_id=#{com_id}  and p.college=col.id and p.com_id=c.id) A left outer join comm_admin.office B on A.id = B.peo_id
+    </select>
+
+    <!--获取社团成员列表-->
+    <select id="findPeopleList" resultType="com.chen.entity.people" parameterType="map">
+        select p.* , c.name as comName , college.name as collegeName
+        from comm_admin.college,comm_admin.people p ,comm_admin.comm c
+        where p.com_id = c.id and p.college=college.id
+        ORDER BY c.name DESC ,p.flag DESC
+    </select>
+
+   <!-- //根据姓名模糊查询某社团成员
+    List<people> queryCommPeopleListByName(Integer com_id,String name);-->
+    <select id="queryCommPeopleListByName" resultType="com.chen.entity.people" parameterType="map">
+        select  A.* , B.name as officeName , B.position as officePosition
+        from (select  p.* , c.name as comName , col.name as collegeName
+              from comm_admin.college col , comm_admin.people p , comm_admin.comm c
+              where p.com_id=#{com_id} and p.name like "%"#{name}"%" and p.college=col.id and p.com_id=c.id) A left outer join comm_admin.office B on A.id = B.peo_id
+    </select>
+
+    <!--//根据账号查找用户-->
+    <select id="findPeopleByUserName" resultType="com.chen.entity.people" parameterType="map">
+        select  A.* , B.name as officeName , B.position as officePosition
+        from  (select  comm_admin.people.*,college.name as collegeName
+                from comm_admin.college,comm_admin.people
+                where  userName= #{userName} and college=college.id) A left outer join comm_admin.office B on A.id = B.peo_id
+    </select>
+<!--    //更具id查询用户
+    people findPeopleById(Integer id);-->
+    <!--//根据姓名查找用户-->
+    <select id="findPeopleById" resultType="com.chen.entity.people" parameterType="Integer">
+        select * from comm_admin.people where  id= #{id}
+    </select>
+    <!--//查找社团负责人-->
+    <select id="findPeopleByFlag" resultType="com.chen.entity.people" parameterType="map">
+        select * from comm_admin.people where  com_id= #{com_id} and flag=#{flag}
+    </select>
+
+    <update id="updatePeople" parameterType="com.chen.entity.people">
+        update people set passWord= #{passWord} , name = #{name},college = #{college} , phone= #{phone},
+                          flag = #{flag} , com_id=#{com_id} , name_class = #{name_class} , wx = #{wx}
+        where id = #{id}
+    </update>
+
+    <!--1.更改人员社团-->
+    <update id="delCommPeople" parameterType="map">
+        update people set com_id=#{com_id}  where id=#{peo_id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.office.officeMapper">
+
+    <insert id="addCommOffice" parameterType="com.chen.entity.office">
+        insert into office(name,position,com_id,peo_id)
+        values (#{name},#{position},#{com_id},#{peo_id})
+    </insert>
+
+<!--//查找社团部门-->
+    <select id="finCommOfficeList" resultType="com.chen.entity.office" parameterType="Integer">
+        select  A.* , B.name as peoName,B.phone as peoPhone
+        from (select o.*, c.name as comName from office o , comm c
+              where  o.com_id=#{com_id} and c.id=o.com_id) A left outer join people B on A.peo_id=B.id
+    </select>
+
+<!--//删除部门-->
+    <delete id="delCommOffice" parameterType="Integer">
+        delete from office where id = #{id}
+    </delete>
+
+<!-- //查询任职信息-->
+    <select id="finCommOfficeBypeoId" resultType="com.chen.entity.office" parameterType="Integer">
+        select o.*,p.name as peoName , p.phone as peoPhone , c.name as comName
+        from office o,people p,comm c
+        where o.peo_id=#{peo_id} and c.id=o.com_id and o.peo_id=p.id
+    </select>
+
+</mapper>

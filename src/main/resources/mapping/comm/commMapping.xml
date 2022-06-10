@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.comm.commMapper">
+
+
+
+    <select id="findComm" resultType="com.chen.entity.comm">
+        select * from comm where name=#{name}
+    </select>
+
+    <select id="getCommById" resultType="com.chen.entity.comm">
+        select comm.*,college.name as collegeName
+        from college,comm where comm.id=#{id} and college=college.id
+    </select>
+
+    <!--添加社团-->
+    <insert id="addComm" parameterType="com.chen.entity.comm">
+    insert into comm(name,college,teacher,date,sum,intro,type)
+    values (#{name},#{college},#{teacher},#{date},#{sum},#{intro},#{type})
+    </insert>
+
+    <!--获取社团列表-->
+    <select id="findCommList" resultType="com.chen.entity.comm" parameterType="map">
+        select * from comm
+        order by comm.college
+    </select>
+
+
+    <!--2.删除该社团的所有部门-->
+    <delete id="delCommOfficeALL" parameterType="Integer">
+        delete from office where com_id = #{com_id}
+    </delete>
+    <!--3.删除该社团-->
+    <delete id="delComm" parameterType="Integer">
+        delete from comm where id = #{id}
+    </delete>
+
+    <!--学生社团信息修改-->
+    <update id="updataComm" parameterType="com.chen.entity.comm">
+        update comm set name = #{name},teacher = #{teacher},sum=#{sum},intro = #{intro},type = #{type}
+        where id = #{id}
+    </update>
+
+    <!--模糊匹配社团-->
+    <select id="queryCommList" resultType="com.chen.entity.comm" parameterType="map">
+        select * from comm where name like "%"#{name}"%"
+    </select>
+
+
+
+</mapper>

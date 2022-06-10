@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis. org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.activity.activityMapper">
+
+
+    <!--//找到社团活动列表-->
+    <select id="findCommActivityList" resultType="com.chen.entity.activity" parameterType="Integer">
+        select *
+        from activity
+        where com_id = #{com_id} order by activity.state , activity.date
+    </select>
+    <!--社团管理员查询活动记录-->
+    <select id="queryCommActivityList" resultType="com.chen.entity.activity" parameterType="map">
+        select *
+        from activity
+        where com_id = #{com_id}
+          and name like "%"#{name}"%"
+    </select>
+
+    <!--系统管理员查询活动记录-->
+    <select id="findActivityListByNameState" resultType="com.chen.entity.activity" parameterType="map">
+        select *
+        from activity
+        where state = #{state}
+          and name like "%"#{name}"%"
+    </select>
+
+
+    <!--//找到活动记录-->
+    <select id="findCommActivityById" resultType="com.chen.entity.activity" parameterType="Integer">
+        select A.*,B.name as peoName from
+            (select A.*,B.name as comName
+             from (select *from activity where id = #{id}) A
+                      left outer join comm B on A.com_id=B.id) A left outer join people B on A.peo_id=B.id
+    </select>
+
+    <!--删除活动-->
+    <delete id="delCommActivityById" parameterType="Integer">
+        delete
+        from activity
+        where id = #{id}
+    </delete>
+
+    <!--活动申请-->
+    <insert id="addCommActivity" parameterType="com.chen.entity.activity">
+        insert into activity(name, date_start, date_stop, location, theme, intros, date, state, peo_id, com_id)
+        values (#{name}, #{date_start}, #{date_stop}, #{location}, #{theme}, #{intros}, #{date}, #{state}, #{peo_id},
+                #{com_id})
+    </insert>
+
+
+    <!--//修改活动-->
+    <update id="updataActivity" parameterType="com.chen.entity.activity">
+        update activity
+        set name       = #{name},
+            date_start = #{date_stop},
+            date_stop  = #{date_stop},
+            location   = #{location},
+            theme      = #{theme},
+            intros     = #{intros},
+            reply      = #{reply},
+            date       = #{date},
+            state      = #{state}
+        where id = #{id}
+    </update>
+    <!--//根据状态找到活动列表 (社团可无 申请人可无)-->
+    <select id="findActivityListByState" resultType="com.chen.entity.activity" parameterType="map">
+        select A.*,B.name as peoName from
+            (select A.*,B.name as comName
+             from (select *from activity where state = #{state}) A
+                      left outer join comm B on A.com_id=B.id) A left outer join people B on A.peo_id=B.id
+    </select>
+
+
+</mapper>
