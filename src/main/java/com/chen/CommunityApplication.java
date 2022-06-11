@@ -18,6 +18,7 @@ public class CommunityApplication {
         System.out.println("hot-fix test1");
         System.out.println("push test");
         System.out.println("ssh test1");
+        System.out.println("pull test1");
     }
 
 }
